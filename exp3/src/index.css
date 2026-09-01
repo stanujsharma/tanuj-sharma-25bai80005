@@ -248,7 +248,7 @@ body {
   line-height: 1.5;
 }
 
-/* Edit and Delete Buttons */
+/* Content Edit and Delete Buttons */
 
 .content-item button {
   margin-top: 5px;
@@ -261,8 +261,6 @@ body {
   font-weight: 500;
 }
 
-/* Edit Button */
-
 .content-item button:first-of-type {
   background-color: #2563eb;
 }
@@ -271,14 +269,41 @@ body {
   background-color: #1d4ed8;
 }
 
-/* Delete Button */
-
 .content-item button:last-of-type {
   background-color: #dc2626;
   margin-right: 0;
 }
 
 .content-item button:last-of-type:hover {
+  background-color: #b91c1c;
+}
+
+/* Admin User Table Buttons */
+
+table td button {
+  margin-right: 12px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+table td button:last-child {
+  margin-right: 0;
+  background-color: #dc2626;
+}
+
+table td button:first-child {
+  background-color: #2563eb;
+}
+
+table td button:first-child:hover {
+  background-color: #1d4ed8;
+}
+
+table td button:last-child:hover {
   background-color: #b91c1c;
 }
 

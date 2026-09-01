@@ -1,16 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import initialContent from "../data/content";
 
 const Editor = () => {
   const { user } = useAuth();
 
-  const [content, setContent] = useState(initialContent);
+  // Load saved content
+  const [content, setContent] = useState(() => {
+    const savedContent =
+      localStorage.getItem("rbac_content");
+
+    return savedContent
+      ? JSON.parse(savedContent)
+      : initialContent;
+  });
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
   const [editingId, setEditingId] = useState(null);
+
+  // Save content whenever it changes
+  useEffect(() => {
+    localStorage.setItem(
+      "rbac_content",
+      JSON.stringify(content)
+    );
+  }, [content]);
 
   // Add new content
   const addContent = () => {
@@ -21,21 +37,31 @@ const Editor = () => {
 
     const newContent = {
       id: Date.now(),
-      title: title,
-      description: description,
+      title: title.trim(),
+      description: description.trim(),
     };
 
-    setContent([...content, newContent]);
+    setContent((currentContent) => [
+      ...currentContent,
+      newContent,
+    ]);
 
     setTitle("");
     setDescription("");
+
+    alert("Content added successfully.");
   };
 
-  // Start editing existing content
+  // Start editing
   const startEdit = (item) => {
     setEditingId(item.id);
     setTitle(item.title);
     setDescription(item.description);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   // Update existing content
@@ -45,13 +71,13 @@ const Editor = () => {
       return;
     }
 
-    setContent(
-      content.map((item) =>
+    setContent((currentContent) =>
+      currentContent.map((item) =>
         item.id === editingId
           ? {
               ...item,
-              title: title,
-              description: description,
+              title: title.trim(),
+              description: description.trim(),
             }
           : item
       )
@@ -60,22 +86,32 @@ const Editor = () => {
     setEditingId(null);
     setTitle("");
     setDescription("");
+
+    alert("Content updated successfully.");
   };
 
-  // Delete existing content
+  // Delete content
   const deleteContent = (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this content?"
+    const selectedContent = content.find(
+      (item) => item.id === id
     );
 
-    if (!confirmDelete) {
-      return;
-    }
+    if (
+      window.confirm(
+        `Delete "${selectedContent?.title}"?`
+      )
+    ) {
+      setContent((currentContent) =>
+        currentContent.filter(
+          (item) => item.id !== id
+        )
+      );
 
-    setContent(content.filter((item) => item.id !== id));
+      alert("Content deleted successfully.");
+    }
   };
 
-  // Cancel editing
+  // Cancel edit
   const cancelEdit = () => {
     setEditingId(null);
     setTitle("");
@@ -97,14 +133,18 @@ const Editor = () => {
       {/* Add / Edit Content */}
       <div className="role-card">
         <h2>
-          {editingId ? "Edit Existing Content" : "Add New Content"}
+          {editingId
+            ? "Edit Existing Content"
+            : "Add New Content"}
         </h2>
 
         <input
           type="text"
           placeholder="Enter content title"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) =>
+            setTitle(e.target.value)
+          }
         />
 
         <br />
@@ -113,7 +153,9 @@ const Editor = () => {
         <textarea
           placeholder="Enter content description"
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={(e) =>
+            setDescription(e.target.value)
+          }
           rows="4"
         />
 
@@ -145,16 +187,25 @@ const Editor = () => {
           <p>No content available.</p>
         ) : (
           content.map((item) => (
-            <div className="content-item" key={item.id}>
+            <div
+              className="content-item"
+              key={item.id}
+            >
               <h3>{item.title}</h3>
 
               <p>{item.description}</p>
 
-              <button onClick={() => startEdit(item)}>
+              <button
+                onClick={() => startEdit(item)}
+              >
                 Edit
               </button>
 
-              <button onClick={() => deleteContent(item.id)}>
+              <button
+                onClick={() =>
+                  deleteContent(item.id)
+                }
+              >
                 Delete
               </button>
             </div>
@@ -162,7 +213,7 @@ const Editor = () => {
         )}
       </div>
 
-      {/* Editor Permissions */}
+      {/* Permissions */}
       <div className="role-card">
         <h2>Editor Permissions</h2>
 

@@ -1,59 +1,138 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import usersData from "../data/users";
 
 const Admin = () => {
   const { user } = useAuth();
 
-  const [users, setUsers] = useState(usersData);
+  // Load users from localStorage
+  const [users, setUsers] = useState(() => {
+    const savedUsers = localStorage.getItem("rbac_users");
+
+    return savedUsers ? JSON.parse(savedUsers) : usersData;
+  });
+
   const [newUsername, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newRole, setNewRole] = useState("Viewer");
 
+  // Save users whenever users change
+  useEffect(() => {
+    localStorage.setItem("rbac_users", JSON.stringify(users));
+  }, [users]);
+
+  // Add User
   const addUser = () => {
-    if (!newUsername || !newPassword) {
+    if (!newUsername.trim() || !newPassword.trim()) {
       alert("Please enter username and password.");
+      return;
+    }
+
+    const usernameExists = users.some(
+      (item) =>
+        item.username.toLowerCase() ===
+        newUsername.trim().toLowerCase()
+    );
+
+    if (usernameExists) {
+      alert("Username already exists.");
       return;
     }
 
     const newUser = {
       id: Date.now(),
-      username: newUsername,
+      username: newUsername.trim(),
       password: newPassword,
       role: newRole,
     };
 
-    setUsers([...users, newUser]);
+    setUsers((currentUsers) => [
+      ...currentUsers,
+      newUser,
+    ]);
 
     setNewUsername("");
     setNewPassword("");
     setNewRole("Viewer");
+
+    alert("User added successfully.");
   };
 
-  const deleteUser = (id) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      setUsers(users.filter((user) => user.id !== id));
-    }
-  };
-
+  // Edit User
   const editUser = (id) => {
-    const updatedUsername = prompt("Enter new username:");
+    const selectedUser = users.find(
+      (item) => item.id === id
+    );
 
-    if (!updatedUsername) {
+    if (!selectedUser) {
       return;
     }
 
-    setUsers(
-      users.map((user) =>
-        user.id === id
-          ? { ...user, username: updatedUsername }
-          : user
+    const updatedUsername = prompt(
+      "Enter new username:",
+      selectedUser.username
+    );
+
+    if (!updatedUsername || !updatedUsername.trim()) {
+      return;
+    }
+
+    const usernameExists = users.some(
+      (item) =>
+        item.id !== id &&
+        item.username.toLowerCase() ===
+          updatedUsername.trim().toLowerCase()
+    );
+
+    if (usernameExists) {
+      alert("Username already exists.");
+      return;
+    }
+
+    setUsers((currentUsers) =>
+      currentUsers.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              username: updatedUsername.trim(),
+            }
+          : item
       )
     );
+
+    alert("User updated successfully.");
+  };
+
+  // Delete User
+  const deleteUser = (id) => {
+    const selectedUser = users.find(
+      (item) => item.id === id
+    );
+
+    if (!selectedUser) {
+      return;
+    }
+
+    if (selectedUser.username === user.username) {
+      alert("You cannot delete your own account.");
+      return;
+    }
+
+    if (
+      window.confirm(
+        `Delete user "${selectedUser.username}"?`
+      )
+    ) {
+      setUsers((currentUsers) =>
+        currentUsers.filter((item) => item.id !== id)
+      );
+
+      alert("User deleted successfully.");
+    }
   };
 
   return (
-    <div className="admin-panel">
+    <div className="page-container">
       <h1>Admin Panel</h1>
 
       <p>
@@ -64,6 +143,7 @@ const Admin = () => {
         You have <strong>Admin</strong> permissions.
       </p>
 
+      {/* Add User */}
       <div className="role-card">
         <h2>Manage Users</h2>
 
@@ -72,29 +152,38 @@ const Admin = () => {
             type="text"
             placeholder="Username"
             value={newUsername}
-            onChange={(e) => setNewUsername(e.target.value)}
+            onChange={(e) =>
+              setNewUsername(e.target.value)
+            }
           />
 
           <input
             type="password"
             placeholder="Password"
             value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
+            onChange={(e) =>
+              setNewPassword(e.target.value)
+            }
           />
 
           <select
             value={newRole}
-            onChange={(e) => setNewRole(e.target.value)}
+            onChange={(e) =>
+              setNewRole(e.target.value)
+            }
           >
             <option value="Admin">Admin</option>
             <option value="Editor">Editor</option>
             <option value="Viewer">Viewer</option>
           </select>
 
-          <button onClick={addUser}>Add User</button>
+          <button onClick={addUser}>
+            Add User
+          </button>
         </div>
       </div>
 
+      {/* User List */}
       <div className="role-card">
         <h2>User List</h2>
 
@@ -112,19 +201,25 @@ const Admin = () => {
             {users.map((item) => (
               <tr key={item.id}>
                 <td>{item.id}</td>
-
                 <td>{item.username}</td>
-
                 <td>{item.role}</td>
 
                 <td>
-                  <button onClick={() => editUser(item.id)}>
+                  <button
+                    onClick={() =>
+                      editUser(item.id)
+                    }
+                  >
                     Edit
                   </button>
 
                   <button
-                    onClick={() => deleteUser(item.id)}
-                    disabled={item.username === user.username}
+                    onClick={() =>
+                      deleteUser(item.id)
+                    }
+                    disabled={
+                      item.username === user.username
+                    }
                   >
                     Delete
                   </button>
@@ -135,6 +230,7 @@ const Admin = () => {
         </table>
       </div>
 
+      {/* Permissions */}
       <div className="role-card">
         <h2>Admin Permissions</h2>
 

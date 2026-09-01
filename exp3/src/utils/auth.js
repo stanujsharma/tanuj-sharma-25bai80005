@@ -1,5 +1,16 @@
 import { jwtDecode } from "jwt-decode";
-import users from "../data/users";
+import usersData from "../data/users";
+
+// Get users from localStorage
+const getUsers = () => {
+  const savedUsers = localStorage.getItem("rbac_users");
+
+  if (savedUsers) {
+    return JSON.parse(savedUsers);
+  }
+
+  return usersData;
+};
 
 // Generate mock JWT
 export const generateToken = (user) => {
@@ -12,7 +23,6 @@ export const generateToken = (user) => {
 
   const payload = btoa(
     JSON.stringify({
-      id: user.id,
       username: user.username,
       role: user.role,
       iat: Date.now(),
@@ -24,12 +34,14 @@ export const generateToken = (user) => {
   return `${header}.${payload}.${signature}`;
 };
 
-// Validate login credentials
+// Login using current saved users
 export const loginUser = (username, password) => {
+  const users = getUsers();
+
   const user = users.find(
-    (user) =>
-      user.username === username &&
-      user.password === password
+    (item) =>
+      item.username === username &&
+      item.password === password
   );
 
   if (!user) {
@@ -43,12 +55,12 @@ export const loginUser = (username, password) => {
   return token;
 };
 
-// Get stored JWT token
+// Get stored token
 export const getToken = () => {
   return localStorage.getItem("token");
 };
 
-// Decode JWT token
+// Decode JWT
 export const getUserFromToken = () => {
   const token = getToken();
 
@@ -57,19 +69,27 @@ export const getUserFromToken = () => {
   }
 
   try {
-    return jwtDecode(token);
+    const parts = token.split(".");
+
+    if (parts.length !== 3) {
+      return null;
+    }
+
+    const payload = JSON.parse(atob(parts[1]));
+
+    return payload;
   } catch (error) {
     console.error("Invalid token:", error);
     return null;
   }
 };
 
-// Logout user
+// Logout
 export const logoutUser = () => {
   localStorage.removeItem("token");
 };
 
-// Check whether user is authenticated
+// Check authentication
 export const isAuthenticated = () => {
   return getUserFromToken() !== null;
 };
