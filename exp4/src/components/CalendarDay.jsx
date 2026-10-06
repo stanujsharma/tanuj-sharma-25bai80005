@@ -7,12 +7,19 @@ const CalendarDay = ({
   posts,
   onDropPost,
   onDragStart,
+  onDragOverDate,
   onPostRender,
   mode,
 }) => {
-  const handleDragOver = useCallback((e) => {
-    e.preventDefault();
-  }, []);
+  const handleDragOver = useCallback(
+    (e) => {
+      e.preventDefault();
+
+      // Only non-optimized mode updates state
+      onDragOverDate(date);
+    },
+    [date, onDragOverDate]
+  );
 
   const handleDrop = useCallback(
     (e) => {
@@ -55,21 +62,24 @@ const CalendarDay = ({
 const MemoizedCalendarDay = memo(
   CalendarDay,
   (previousProps, nextProps) => {
-    // Non-optimized mode:
-    // Always allow re-rendering.
+    // Non-optimized:
+    // Always re-render.
     if (nextProps.mode === "non-optimized") {
       return false;
     }
 
-    // Optimized mode:
-    // Re-render only when required props change.
+    // Optimized:
+    // Skip render if props have not changed.
     return (
       previousProps.day === nextProps.day &&
       previousProps.date === nextProps.date &&
       previousProps.posts === nextProps.posts &&
       previousProps.onDropPost === nextProps.onDropPost &&
       previousProps.onDragStart === nextProps.onDragStart &&
-      previousProps.onPostRender === nextProps.onPostRender &&
+      previousProps.onDragOverDate ===
+        nextProps.onDragOverDate &&
+      previousProps.onPostRender ===
+        nextProps.onPostRender &&
       previousProps.mode === nextProps.mode
     );
   }

@@ -1,0 +1,543 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: #07111f;
+  color: #f8fafc;
+  min-height: 100vh;
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Main Container */
+.app-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background */
+.bg-orbs {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(110px);
+  opacity: 0.3;
+}
+
+.orb-1 {
+  width: 360px;
+  height: 360px;
+  background: #06b6d4;
+  top: -120px;
+  left: -100px;
+}
+
+.orb-2 {
+  width: 420px;
+  height: 420px;
+  background: #2563eb;
+  bottom: -170px;
+  right: -120px;
+}
+
+.orb-3 {
+  width: 280px;
+  height: 280px;
+  background: #8b5cf6;
+  top: 35%;
+  right: 15%;
+}
+
+/* Glass Card */
+.glass-card {
+  width: 100%;
+  max-width: 650px;
+  padding: 35px;
+  position: relative;
+  z-index: 2;
+
+  background: rgba(10, 24, 42, 0.78);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 28px;
+
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -1px;
+
+  background: linear-gradient(
+    90deg,
+    #ffffff,
+    #67e8f9,
+    #a78bfa
+  );
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  margin-top: 8px;
+  color: #67e8f9;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* Stats */
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.stat-box {
+  padding: 18px 10px;
+  text-align: center;
+
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 16px;
+
+  transition: 0.3s ease;
+}
+
+.stat-box:hover {
+  background: rgba(6, 182, 212, 0.07);
+  border-color: rgba(6, 182, 212, 0.2);
+  transform: translateY(-2px);
+}
+
+.stat-number {
+  display: block;
+  font-size: 26px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.stat-label {
+  display: block;
+  margin-top: 4px;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.text-green {
+  color: #4ade80;
+}
+
+.text-orange {
+  color: #fbbf24;
+}
+
+/* Add Task Form */
+.add-task-form {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.input-group {
+  flex: 1;
+  position: relative;
+}
+
+.task-input {
+  width: 100%;
+  height: 52px;
+  padding: 0 18px;
+
+  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.045);
+
+  border: 1px solid rgba(148, 163, 184, 0.13);
+  border-radius: 14px;
+  outline: none;
+
+  font-size: 14px;
+  transition: 0.3s ease;
+}
+
+.task-input::placeholder {
+  color: #64748b;
+}
+
+.task-input:focus {
+  border-color: rgba(6, 182, 212, 0.65);
+  background: rgba(255, 255, 255, 0.065);
+
+  box-shadow:
+    0 0 25px rgba(6, 182, 212, 0.12);
+}
+
+/* Add Button */
+.add-button {
+  height: 52px;
+  min-width: 90px;
+  border: none;
+  border-radius: 14px;
+
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+
+  background: linear-gradient(
+    135deg,
+    #0891b2,
+    #2563eb
+  );
+
+  box-shadow:
+    0 8px 25px rgba(6, 182, 212, 0.22);
+
+  transition: 0.3s ease;
+}
+
+.add-button:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 12px 30px rgba(6, 182, 212, 0.35);
+}
+
+.add-button:active {
+  transform: translateY(0);
+}
+
+/* Task List */
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Task Item */
+.task-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 16px 18px;
+
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+
+  border-radius: 17px;
+
+  transition: all 0.3s ease;
+}
+
+.task-item:hover {
+  background: rgba(6, 182, 212, 0.045);
+  border-color: rgba(6, 182, 212, 0.22);
+  transform: translateY(-1px);
+}
+
+.task-item.completed {
+  background: linear-gradient(
+    90deg,
+    rgba(34, 197, 94, 0.08),
+    rgba(6, 182, 212, 0.07)
+  );
+
+  border-color: rgba(74, 222, 128, 0.16);
+}
+
+/* Task Content */
+.task-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+/* Checkbox */
+.checkbox-wrapper {
+  width: 23px;
+  height: 23px;
+  flex-shrink: 0;
+
+  border: 2px solid #475569;
+  border-radius: 7px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: 0.25s ease;
+}
+
+.checkbox-wrapper:hover {
+  border-color: #22d3ee;
+}
+
+.checkbox-wrapper.checked {
+  border-color: #22c55e;
+  background: #22c55e;
+}
+
+.checkbox-inner {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkbox-inner svg {
+  width: 15px;
+  height: 15px;
+  color: white;
+}
+
+/* Task Info */
+.task-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.task-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: #f1f5f9;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.completed .task-title {
+  color: #94a3b8;
+  text-decoration: line-through;
+}
+
+.task-meta {
+  font-size: 11px;
+  color: #64748b;
+}
+
+/* Delete Button */
+.delete-button {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+
+  border: none;
+  border-radius: 10px;
+
+  background: transparent;
+  color: #64748b;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: 0.25s ease;
+}
+
+.delete-button:hover {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.trash-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Loading */
+.loading-container {
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.spinner {
+  width: 38px;
+  height: 38px;
+  margin: 0 auto 18px;
+
+  border: 3px solid rgba(255, 255, 255, 0.08);
+  border-top-color: #22d3ee;
+  border-right-color: #8b5cf6;
+
+  border-radius: 50%;
+
+  animation: spin 0.8s linear infinite;
+}
+
+.loading-text {
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Empty State */
+.empty-state {
+  padding: 45px 20px;
+  text-align: center;
+
+  border: 1px dashed rgba(148, 163, 184, 0.12);
+  border-radius: 18px;
+}
+
+.empty-icon {
+  font-size: 35px;
+  margin-bottom: 12px;
+}
+
+.empty-text {
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+/* Pagination */
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+
+  margin-top: 10px;
+  padding-top: 18px;
+}
+
+.page-button {
+  height: 38px;
+  padding: 0 14px;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.04);
+
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 10px;
+
+  font-size: 12px;
+
+  transition: 0.25s ease;
+}
+
+.page-button:hover:not(:disabled) {
+  color: white;
+  background: rgba(6, 182, 212, 0.12);
+  border-color: rgba(6, 182, 212, 0.3);
+}
+
+.page-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.page-indicator {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  font-size: 13px;
+}
+
+.current-page {
+  color: #67e8f9;
+  font-weight: 600;
+}
+
+.page-divider {
+  color: #475569;
+}
+
+.total-pages {
+  color: #64748b;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .app-container {
+    padding: 20px 12px;
+  }
+
+  .glass-card {
+    padding: 24px 18px;
+    border-radius: 22px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .add-task-form {
+    flex-direction: column;
+  }
+
+  .add-button {
+    width: 100%;
+  }
+
+  .stats-container {
+    gap: 8px;
+  }
+
+  .stat-box {
+    padding: 14px 8px;
+  }
+
+  .stat-number {
+    font-size: 22px;
+  }
+
+  .task-item {
+    padding: 14px;
+  }
+}

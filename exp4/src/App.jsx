@@ -1,4 +1,3 @@
-
 import {
   useState,
   useRef,
@@ -39,7 +38,7 @@ function App() {
     return posts.filter((post) => post.date);
   }, [posts]);
 
-  // Count event calculations when posts change
+  // Event calculation only when posts actually change
   useEffect(() => {
     setEventCalculations((count) => count + 1);
   }, [posts]);
@@ -53,7 +52,6 @@ function App() {
     <div className="app">
       <header className="top-header">
         <div>
-
           <h1>Social Media Scheduler</h1>
 
           <p className="subtitle">

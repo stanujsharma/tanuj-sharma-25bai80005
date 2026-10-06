@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useEffect,
 } from "react";
+
 import CalendarDay from "./CalendarDay";
 
 const Calendar = ({
@@ -17,10 +18,19 @@ const Calendar = ({
     new Date(2026, 7, 1)
   );
 
+  // Used only for demonstrating non-optimized rendering
+  const [hoveredDate, setHoveredDate] = useState(null);
+
   // Monitor Calendar rendering
   useEffect(() => {
     onCalendarRender();
-  }, [onCalendarRender, posts, currentMonth, mode]);
+  }, [
+    onCalendarRender,
+    posts,
+    currentMonth,
+    mode,
+    hoveredDate,
+  ]);
 
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
@@ -33,17 +43,20 @@ const Calendar = ({
       0
     ).getDate();
 
-    return Array.from({ length: daysInMonth }, (_, index) => {
-      const day = index + 1;
+    return Array.from(
+      { length: daysInMonth },
+      (_, index) => {
+        const day = index + 1;
 
-      return {
-        day,
-        date: `${year}-${String(month + 1).padStart(
-          2,
-          "0"
-        )}-${String(day).padStart(2, "0")}`,
-      };
-    });
+        return {
+          day,
+          date: `${year}-${String(month + 1).padStart(
+            2,
+            "0"
+          )}-${String(day).padStart(2, "0")}`,
+        };
+      }
+    );
   }, [year, month]);
 
   // Group posts by date
@@ -79,7 +92,18 @@ const Calendar = ({
     );
   }, []);
 
-  // Move post to another date
+  // Handle hover
+  const handleDragOverDate = useCallback(
+    (date) => {
+      if (mode === "non-optimized") {
+        // Deliberately update state on every hover
+        setHoveredDate(date);
+      }
+    },
+    [mode]
+  );
+
+  // Move post only when dropped
   const handleDropPost = useCallback(
     (postId, newDate) => {
       const updatedPosts = posts.map((post) =>
@@ -89,6 +113,9 @@ const Calendar = ({
       );
 
       onPostsChange(updatedPosts);
+
+      // Clear hover state
+      setHoveredDate(null);
     },
     [posts, onPostsChange]
   );
@@ -135,6 +162,7 @@ const Calendar = ({
             posts={postsByDate[date] || []}
             onDropPost={handleDropPost}
             onDragStart={handleDragStart}
+            onDragOverDate={handleDragOverDate}
             onPostRender={onPostRender}
             mode={mode}
           />
